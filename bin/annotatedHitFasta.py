@@ -97,12 +97,12 @@ def extract_and_output(ace_id, ace_id_to_taxonomy, ace_id_to_proteome_file, curr
   num_written = 0
   # import code; code.interact(local=locals())
   for record in SeqIO.parse(StringIO.StringIO(stdout), 'fasta'):
-    output_fh.write('>%s_%s %s\n' % (ace_id, record.id, taxonomy))
-    output_fh.write('%s\n' % record.seq)
+    output_fh.write('>%s_%s %s\n%s\n' % (ace_id, record.id, taxonomy, record.seq))
     num_written += 1
 
   if num_written != len(current_protein_ids):
-    import code; code.interact(local=locals())
+    import code
+    code.interact(local=locals())
     raise Exception("Unexpected number of proteins retrieved from fasta file!")
 
 
@@ -128,11 +128,10 @@ with open(options.hit_fasta_file, 'w') as output_fh:
       if current_ace_id is not None and ace_id != current_ace_id:
         # if the ACE ID has changed, then fxtract the proteins from the last ACE ID's faa file, adding the taxonomy to the ID line and print the now annotated fasta file
         extract_and_output(current_ace_id, ace_id_to_taxonomy, ace_id_to_proteome_file, current_protein_ids, output_fh)
-        current_ace_id = ace_id
         current_protein_ids = [protein_id]
       else:
-        current_ace_id = ace_id
         current_protein_ids.append(protein_id)
+      current_ace_id = ace_id
 
     if current_ace_id is None:
       raise Exception("No sequences parsed from aligned fasta file, it seems")

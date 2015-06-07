@@ -229,19 +229,19 @@ class BlastWorkflow():
                 arb_metadata['blast_query_id'] = hit_info.query_id
 
             if annotation:
-                annotation_split = annotation.split('[')
-                if len(annotation_split) == 3:
-                    # assume format is <annotation> [<genome name>] [<IMG gene id>]
+                # assume format is <annotation> [<genome name>] [<IMG gene id>]
+                # replace ']' and 'IMG Gene ID: ' here to remove duplicated work
+                annotation_split = annotation.replace(']', '').\
+                                              replace('IMG Gene ID: ', '').\
+                                              split('[')
+                len_anotations = len(anotation_split)
+                if len_annotations == 3:
                     gene_annotation, organism_name, gene_id = annotation_split
-                    organism_name = organism_name.replace(']', '')
-                    gene_id = gene_id.replace(']', '').replace('IMG Gene ID: ', '')
-                elif len(annotation_split) == 2:
+                elif len_annotations == 2:
                     # format is essentially unknown, but the most likely issue
                     # is that the gene itself just doesn't have an annotation
                     gene_annotation = ''
                     organism_name, gene_id = annotation_split
-                    organism_name = organism_name.replace(']', '')
-                    gene_id = gene_id.replace(']', '').replace('IMG Gene ID: ', '')
                 else:
                     # no idea what the format is, so just save the annotation
                     gene_annotation = annotation
